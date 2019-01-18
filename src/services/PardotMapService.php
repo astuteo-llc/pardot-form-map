@@ -18,10 +18,6 @@ use craft\base\Component;
 /**
  * PardotMapService Service
  *
- * All of your plugin’s business logic should go in services, including saving data,
- * retrieving data, etc. They provide APIs that your controllers, template variables,
- * and other plugins can interact with.
- *
  * https://craftcms.com/docs/plugins/services
  *
  * @author    astuteo
@@ -36,11 +32,6 @@ class PardotMapService extends Component
     /**
      * Watch Freeform then map the fields to the
      * form handler.
-     *
-     * There is likely a much more efficient way to loop through
-     * these and map them to strings but I'm doing it one by one.
-     * This retains storing data in Freeform submissions and takes
-     * the email address array and forces it into a string
      */
     public function mapToPardot($submissionEvent) {
         $submission = $submissionEvent->getElement();
