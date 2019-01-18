@@ -1,17 +1,7 @@
-# Pardot Map plugin for Craft CMS 3.x
-
+# Pardot Map plugin
 Intended for Astuteo client's use. A simple helper for client forms to push data to Pardot.
 
-![Screenshot](resources/img/plugin-logo.png)
-
-## Requirements
-
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
-
 ## Installation
-
-To install the plugin, follow these instructions.
-
 1. Open your terminal and go to your Craft project:
 
         cd /path/to/project
@@ -22,22 +12,39 @@ To install the plugin, follow these instructions.
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Pardot Map.
 
-## Pardot Map Overview
+## Overview
+A plugin that works alongside our Freeform forms to push data to Pardot form handlers instead of relying on embedded iFrames.
 
--Insert text here-
+## Configuring
+By default the plugin will process and send the data to Pardot. To log the data that would be pushed without sending create a config file named `pardot-map.php` in the config folder
+similar to the example below:
+```    
+<?php
+return [
+    '*' => [
+        "enableSendToPardot" => true,
+    ],
+    'dev' => [
+        "enableSendToPardot" => false,
+    ],
+];
+```
 
-## Configuring Pardot Map
+## Using
+In Freeform, create two hidden fields. One with the handle `pardotURL` and another with `mapPardot`.
 
--Insert text here-
+Add the fields to the form and set the default value of the `pardotURL` to the URL found in Pardot. 
 
-## Using Pardot Map
+For the `mapPardot` field, add the fields to be mapped to Pardot using `|` as the deliminator. You should use the handle of the field from Freeform and the External Field Name from Pardot. If the handle and the External Field Name are different, you can map them using `<external field name>`:`<freeform handle>`.
 
--Insert text here-
+An example with matching names may look like this:
 
-## Pardot Map Roadmap
+`firstName|lastName|email`
 
-Some things to do, and ideas for potential features:
+An example with names which do not match may look like this:
 
-* Release it
+`pardotFirstName:freeformFirstNameHandle|pardotEmail:freeformEmailHandle`
 
-Brought to you by [astuteo](https://www.astuteo.com)
+This can be mixed as needed:
+
+`firstName|lastName|pardotEmail:freeformEmailHandle`
