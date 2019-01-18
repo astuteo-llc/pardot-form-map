@@ -1,0 +1,43 @@
+{
+    "name": "astuteo/pardot-map",
+    "description": "Intended for Astuteo client's use. A simple helper for client forms to push data to Pardot.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "pardot map"
+    ],
+    "support": {
+        "docs": "https://github.com/astuteollc/pardot-map/blob/master/README.md",
+        "issues": "https://github.com/astuteollc/pardot-map/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "astuteo",
+            "homepage": "https://www.astuteo.com"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "astuteo\\pardotmap\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Pardot Map",
+        "handle": "pardot-map",
+        "hasCpSettings": true,
+        "hasCpSection": false,
+        "changelogUrl": "https://raw.githubusercontent.com/astuteollc/pardot-map/master/CHANGELOG.md",
+        "components": {
+            "pardotMapService": "astuteo\\pardotmap\\services\\PardotMapService"
+        },
+        "class": "astuteo\\pardotmap\\PardotMap"
+    }
+}
