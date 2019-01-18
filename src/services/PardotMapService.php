@@ -30,26 +30,82 @@ use craft\base\Component;
  */
 class PardotMapService extends Component
 {
+
     // Public Methods
     // =========================================================================
+    /**
+     * Watch Freeform then map the fields to the
+     * form handler.
+     *
+     * There is likely a much more efficient way to loop through
+     * these and map them to strings but I'm doing it one by one.
+     * This retains storing data in Freeform submissions and takes
+     * the email address array and forces it into a string
+     */
+    public function mapToPardot($submissionEvent) {
+        $submission = $submissionEvent->getElement();
+
+        // If this field has a hidden Pardot URL let's process it
+        if(isset($submission->fieldMetadata['pardotURL']) && isset($submission->fieldMetadata['mapPardot'])) {
+            $url            = $submission->fieldMetadata['pardotURL']->getValueAsString();
+            $mapData        = $submission->fieldMetadata['mapPardot']->getValueAsString();
+            $fieldsArray    = explode("|", $mapData);
+            $mappingArray   = array();
+
+            for($i=0; $i < count($fieldsArray ); $i++){
+                $key_value = explode(':', $fieldsArray [$i]);
+                if(isset($key_value [1])) {
+                    $mappingArray[$key_value [0]] = $key_value [1];
+                } else {
+                    $mappingArray[$key_value [0]] = $key_value [0];
+                }
+            }
+            Craft::info("Map: " . $mapData, 'astuteoPardotMapPlugin');
+            $this->mapAndSend($submission, $mappingArray, $url);
+        } elseif (isset($submission->fieldMetadata['pardotURL'])) {
+            Craft::info("The Pardot URL is set for form with ID: " . $submission['formId'] . " but the mapPardot Field isn't set", 'astuteoPardotMapPlugin');
+        } else {
+            return;
+        }
+    }
+
+    private function mapAndSend($submission, $fieldsArray, $pardotUrl) {
+        $data = $this->formPardotData($submission, $fieldsArray, $pardotUrl); // forms the URL to push to Pardot
+        $this->sendToPardot($data);
+        return;
+    }
+
+    private function formPardotData($submission, $fieldsArray, $pardotUrl) {
+        $urlString = $pardotUrl;
+        $first = true;
+        foreach ($fieldsArray as $key => $value) {
+            if ($first) {
+                $urlString = $urlString . '?' . $key . '=' . urlencode($submission->fieldMetadata[$value]->getValueAsString());
+            } else {
+                $urlString = $urlString . '&' . $key . '=' . urlencode($submission->fieldMetadata[$value]->getValueAsString());
+            }
+            $first = false;
+        }
+        return $urlString;
+    }
 
     /**
-     * This function can literally be anything you want, and you can have as many service
-     * functions as you want
-     *
-     * From any other plugin file, call it like this:
-     *
-     *     PardotMap::$plugin->pardotMapService->exampleService()
-     *
-     * @return mixed
+     * Using cURL ping the URL with the URL parameters built out
+     * and log the results.
      */
-    public function exampleService()
-    {
-        $result = 'something';
-        // Check our Plugin's settings for `someAttribute`
-        if (PardotMap::$plugin->getSettings()->someAttribute) {
+    private function sendToPardot($url, $send=true) {
+        if (PardotMap::$plugin->getSettings()->enableSendToPardot) {
+            $cSession = curl_init();
+            curl_setopt($cSession,CURLOPT_URL,$url);
+            curl_setopt($cSession,CURLOPT_RETURNTRANSFER,true);
+            curl_setopt($cSession,CURLOPT_HEADER, false);
+            $result=curl_exec($cSession);
+            curl_close($cSession);
+            Craft::info("Sent to Pardot: " . $url, 'astuteoPardotMapPlugin');
+        } else {
+            Craft::info("Would send to Pardot if send is true: " . $url, 'astuteoPardotMapPlugin'); // Curl the URL to push data
         }
-
-        return $result;
+        return;
     }
+
 }
