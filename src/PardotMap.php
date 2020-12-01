@@ -63,21 +63,4 @@ class PardotMap extends Plugin
             __METHOD__
         );
     }
-
-    // Protected Methods
-    // =========================================================================
-    protected function createSettingsModel()
-    {
-        return new Settings();
-    }
-
-    protected function settingsHtml(): string
-    {
-        return Craft::$app->view->renderTemplate(
-            'pardot-map/settings',
-            [
-                'settings' => $this->getSettings()
-            ]
-        );
-    }
 }

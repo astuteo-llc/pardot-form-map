@@ -32,6 +32,8 @@ class PardotMapService extends Component
     /**
      * Watch Freeform then map the fields to the
      * form handler.
+     *
+     * @param $submissionEvent
      */
     public function mapToPardot($submissionEvent) {
         $submission = $submissionEvent->getElement();
@@ -83,6 +85,9 @@ class PardotMapService extends Component
     /**
      * Using cURL ping the URL with the URL parameters built out
      * and log the results.
+     *
+     * @param $url
+     * @param bool $send
      */
     private function sendToPardot($url, $send=true) {
         if (PardotMap::$plugin->getSettings()->enableSendToPardot) {
@@ -96,7 +101,6 @@ class PardotMapService extends Component
         } else {
             Craft::info("Would send to Pardot if send is true: " . $url, 'astuteoPardotMapPlugin'); // Curl the URL to push data
         }
-        return;
     }
 
 }
